@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MoviesApi.Dtos;
 
 namespace MoviesApi.Controllers
 {
@@ -31,5 +32,20 @@ namespace MoviesApi.Controllers
             _context.SaveChanges();
             return Ok(genre);
         }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(byte id, [FromBody] CreateGenreDto dto)
+        {
+            var genre = await _context.Genres.SingleOrDefaultAsync(g => g.id==id);
+
+            if (genre == null)
+                return NotFound($"No genre was found with ID: {id}");
+
+            genre.Name = dto.Name;
+
+            _context.SaveChanges();
+
+            return Ok(genre);
+        }
+
     }
 }
