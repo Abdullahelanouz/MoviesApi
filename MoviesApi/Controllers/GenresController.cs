@@ -22,6 +22,14 @@ namespace MoviesApi.Controllers
 
             return Ok(genres);
         }
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync(CreateGenreDto dto)
+        {
+            var genre = new Genre { Name = dto.Name };
 
+            await _context.AddAsync(genre);
+            _context.SaveChanges();
+            return Ok(genre);
+        }
     }
 }
