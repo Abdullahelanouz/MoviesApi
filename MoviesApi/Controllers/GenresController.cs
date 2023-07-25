@@ -46,6 +46,18 @@ namespace MoviesApi.Controllers
 
             return Ok(genre);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var genre =await _context.Genres.SingleOrDefaultAsync(g => g.id==id);
+            if (genre == null)
+                return NotFound($"No genre was found with ID: {id}");
+            _context.Remove(genre);
+            _context.SaveChanges();
+            return Ok(genre);
+
+            
+    }
 
     }
 }
