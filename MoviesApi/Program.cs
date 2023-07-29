@@ -13,7 +13,8 @@ options.UseSqlServer(connectionString)
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddTransient<IGenresService, GenresService>();    
+builder.Services.AddTransient<IGenresService, GenresService>();
+builder.Services.AddTransient<IMoviesService, MoviesService>();
 builder.Services.AddCors();
 builder.Services.AddSwaggerGen(options =>
         {
