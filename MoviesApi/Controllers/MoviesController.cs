@@ -20,17 +20,17 @@ namespace MoviesApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var movies = await _context.Movies.Include(m=>m.Genre)
+            var movies = await _context.Movies.Include(m => m.Genre)
                 .Select(m => new MovieDetailsDto
                 {
-                    Id=m.Id,
-                    GenreId=m.GenreId,
-                    GenreName=m.Genre.Name,
-                    poster=m.poster,
-                    Rate=m.Rate,
-                    StoreLine=m.StoreLine,
-                    Title=m.Title,
-                    Year=m.Year,
+                    Id = m.Id,
+                    GenreId = m.GenreId,
+                    GenreName = m.Genre.Name,
+                    poster = m.poster,
+                    Rate = m.Rate,
+                    StoreLine = m.StoreLine,
+                    Title = m.Title,
+                    Year = m.Year,
                 })
                 .ToListAsync();
             return Ok(movies);
@@ -39,11 +39,11 @@ namespace MoviesApi.Controllers
 
         public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var movie =await _context.Movies
-                .Include(m=>m.Genre).SingleOrDefaultAsync(m=>m.Id==id);
+            var movie = await _context.Movies
+                .Include(m => m.Genre).SingleOrDefaultAsync(m => m.Id == id);
 
             if (movie == null)
-          
+
                 return NotFound();
             var dto = new MovieDetailsDto
             {
@@ -57,16 +57,16 @@ namespace MoviesApi.Controllers
                 Year = movie.Year,
 
             };
-            
+
             return Ok(dto);
-               
+
         }
         [HttpGet("GetByGenreId")]
 
         public async Task<IActionResult> GetByGenreIdAsync(byte genreId)
         {
             var movies = await _context.Movies
-                .Where(m=> m.GenreId==genreId)
+                .Where(m => m.GenreId == genreId)
                 .Include(m => m.Genre)
                 .Select(m => new MovieDetailsDto
                 {
@@ -81,13 +81,13 @@ namespace MoviesApi.Controllers
                 })
                 .ToListAsync();
             return Ok(movies);
-                
+
         }
 
 
-        [HttpPost]   
+        [HttpPost]
 
-        public async  Task<IActionResult> CreateAsync([FromForm] MovieDto dto)
+        public async Task<IActionResult> CreateAsync([FromForm] MovieDto dto)
         {
             if (!_allowedExtenstions.Contains(Path.GetExtension(dto.poster.FileName).ToLower()))
                 return BadRequest("Only .png and .jpg images are allowed!");
@@ -99,7 +99,7 @@ namespace MoviesApi.Controllers
             if (!isValidGenre)
                 return BadRequest("Invalid genere ID!");
 
-            using var dataStream= new MemoryStream();
+            using var dataStream = new MemoryStream();
 
             await dto.poster.CopyToAsync(dataStream);
             var movie = new Movie
@@ -110,11 +110,30 @@ namespace MoviesApi.Controllers
                 Rate = dto.Rate,
                 StoreLine = dto.StoreLine,
                 Year = dto.Year,
-            
+
             };
             await _context.AddAsync(movie);
             _context.SaveChangesAsync();
             return Ok(movie);
         }
+   
+
+
+    [HttpDelete("{id}")]
+    public  async Task<IActionResult> DeleteAsync(int id)
+    {
+        var movie = await _context.Movies.FindAsync(id);
+        if (movie == null)
+
+            return NotFound( $"No movie was found with ID {id} ");
+          
+         _context.Remove(movie);
+            _context.SaveChanges();  
+
+            return Ok(movie);
+
+    }
+
+
     }
 }
