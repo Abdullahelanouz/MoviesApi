@@ -68,21 +68,8 @@ namespace MoviesApi.Controllers
 
         public async Task<IActionResult> GetByGenreIdAsync(byte genreId)
         {
-            var movies = await _context.Movies
-                .Where(m => m.GenreId == genreId)
-                .Include(m => m.Genre)
-                .Select(m => new MovieDetailsDto
-                {
-                    Id = m.Id,
-                    GenreId = m.GenreId,
-                    GenreName = m.Genre.Name,
-                    poster = m.poster,
-                    Rate = m.Rate,
-                    StoreLine = m.StoreLine,
-                    Title = m.Title,
-                    Year = m.Year,
-                })
-                .ToListAsync();
+            var movies = await _MoviesService.GetAll();
+            //TODO : map movies to DTO
             return Ok(movies);
 
         }
